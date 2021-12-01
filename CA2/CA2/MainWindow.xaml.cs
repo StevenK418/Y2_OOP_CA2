@@ -57,6 +57,8 @@ namespace CA2
 
             //Set the souce of the listbox to the activities collection
             lstbx_all.ItemsSource = activities;
+            //Set the souce of the listbox to the selected activities collection
+            lstbx_selected.ItemsSource = selectedActivities;
         }
 
         private void lstbx_all_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -65,7 +67,7 @@ namespace CA2
             foreach (var activity in activityTypes)
             {
                 //If the selected item contains a key in the dictionary
-                if (lstbx_all.SelectedItem.ToString().Contains(activity.Key))
+                if (lstbx_all.SelectedItem.ToString().Contains(activity.Key) && lstbx_all.SelectedItem != null )
                 {
                     //Set the description field to the associated value in the dictionary
                     tblk_description.Text = activity.Value;
@@ -75,10 +77,18 @@ namespace CA2
 
         private void btn_forward_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var activity in activities)
+            //Cycel through activities list
+            foreach (Activity activity in activities)
             {
-               
+               //If the select item contains the activity title 
+               if(lstbx_all.SelectedItem.ToString().Contains(activity.Title))
+               {
+                    //Add the matching activity from the collection to the selected activities collection
+                    selectedActivities.Add(activity);
+               }
             }
         }
+
+
     }
 }

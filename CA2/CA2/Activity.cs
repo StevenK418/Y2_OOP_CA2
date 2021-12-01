@@ -10,7 +10,7 @@ namespace CA2
 
     class Activity
     {
-        private string Title { get; set; }
+        public string Title { get; set; }
         private string Description { get; set; }
         private decimal Cost { get; set; }
 
