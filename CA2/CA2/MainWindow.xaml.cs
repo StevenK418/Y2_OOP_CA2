@@ -38,7 +38,7 @@ namespace CA2
 
         ObservableCollection<Activity> activities = new ObservableCollection<Activity>();
         ObservableCollection<Activity> selectedActivities = new ObservableCollection<Activity>();
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -63,32 +63,69 @@ namespace CA2
 
         private void lstbx_all_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Cycle through Dictionary
-            foreach (var activity in activityTypes)
-            {
-                //If the selected item contains a key in the dictionary
-                if (lstbx_all.SelectedItem.ToString().Contains(activity.Key) && lstbx_all.SelectedItem != null )
-                {
-                    //Set the description field to the associated value in the dictionary
-                    tblk_description.Text = activity.Value;
-                }
-            }
+            UpdateDescriptionField(lstbx_all);
         }
 
         private void btn_forward_Click(object sender, RoutedEventArgs e)
         {
-            //Cycel through activities list
-            foreach (Activity activity in activities)
-            {
-               //If the select item contains the activity title 
-               if(lstbx_all.SelectedItem.ToString().Contains(activity.Title))
-               {
-                    //Add the matching activity from the collection to the selected activities collection
-                    selectedActivities.Add(activity);
-               }
-            }
+
+            MoveItem(lstbx_all, activities, selectedActivities);
         }
 
+        private void btn_backward_Click(object sender, RoutedEventArgs e)
+        {
+            MoveItem(lstbx_selected, selectedActivities, activities);
+        }
 
+        /// <summary>
+        /// Moves a selected item from a given listbox to another
+        /// </summary>
+        /// <param name="box"></param>
+        /// <param name="location"></param>
+        /// <param name="destination"></param>
+        private void MoveItem(ListBox box, ObservableCollection<Activity> location, ObservableCollection<Activity> destination)
+        {
+            //Declare a variable to store activity for removal
+            Activity activityToRemove = null;
+
+            //Cycle through activities list
+            foreach (Activity activity in location)
+            {
+                //If the select item contains the activity title 
+                if (box.SelectedItem.ToString().Contains(activity.Title))
+                {
+                    //Add the matching activity from the collection to the selected activities collection
+                    destination.Add(activity);
+
+                    //Store the activity for removal later
+                    activityToRemove = activity;
+                }
+            }
+
+            //Remove the activity from the original collection
+            location.Remove(activityToRemove);
+        }
+
+        /// <summary>
+        /// Updates the description field to the activity's associated description 
+        /// </summary>
+        /// <param name="box"></param>
+        private void UpdateDescriptionField(ListBox box)
+        {
+            //Check if the selected item is null (after removal) before doing anything
+            if (box.SelectedItem != null)
+            {
+                //Cycle through Dictionary
+                foreach (var activity in activityTypes)
+                {
+                    //If the selected item contains a key in the dictionary
+                    if (box.SelectedItem.ToString().Contains(activity.Key))
+                    {
+                        //Set the description field to the associated value in the dictionary
+                        tblk_description.Text = activity.Value;
+                    }
+                }
+            }
+        }
     }
 }
