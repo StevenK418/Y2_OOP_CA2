@@ -50,7 +50,7 @@ namespace CA2
             foreach (var activityType in activityTypes)
             {
                 //Create a new instance of the activity class
-                Activity activity = new Activity(activityType.Key, activityType.Value, 10.0m, new DateTime(2015, 12, 25));
+                Activity activity = new Activity(activityType.Key, activityType.Value, 10.0m, new DateTime(2015, 12, 25), Activity.ActivityType.Air);
                 //Add this new instance to the activities collection
                 activities.Add(activity);
             }
