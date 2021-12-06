@@ -6,27 +6,52 @@ using System.Threading.Tasks;
 
 namespace CA2
 {
-
-
-    class Activity
+    class Activity : IComparable<Activity>
     {
         public string Title { get; set; }
         private string Description { get; set; }
-        private decimal Cost { get; set; }
+        public decimal Cost { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime ActivityDate { get; set; }
 
-        public Activity(string title, string description, decimal cost, DateTime date)
+        public enum ActivityType
+        {
+            Air,
+            Water,
+            Land
+        }
+
+        public ActivityType? TypeOfActivity { get; set; }
+
+        public Activity(string title, string description, decimal cost, DateTime date, ActivityType? type)
         {
             Title = title;
             Description = description;
             Cost = cost;
-            Date = date;
+            ActivityDate = date;
+            TypeOfActivity = type;
         }
 
         public override string ToString()
         {
-            return $"{Title} - {Date.ToShortDateString()}";
+            return $"{Title} - {ActivityDate.ToShortDateString()}";
+        }
+
+
+        /// <summary>
+        /// Compares activity instances against eachother using date
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public int CompareTo(Activity other)
+        {
+            // Alphabetic sort if salary is equal. [A to Z]
+            if (this.ActivityDate == other.ActivityDate)
+            {
+                return this.ActivityDate.CompareTo(other.ActivityDate);
+            }
+            // Default to date sort. [High to low]
+            return other.ActivityDate.CompareTo(this.ActivityDate);
         }
 
 
