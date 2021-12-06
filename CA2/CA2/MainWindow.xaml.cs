@@ -36,8 +36,22 @@ namespace CA2
             {"Helicopter Tour", "Explore Ireland's East coast from above Wicklow's wonderous coast."}
         };
 
-        ObservableCollection<Activity> activities = new ObservableCollection<Activity>();
-        ObservableCollection<Activity> selectedActivities = new ObservableCollection<Activity>();
+        Dictionary<string, Activity.ActivityType> activityCategories = new Dictionary<string, Activity.ActivityType>()
+        {
+            {"Treking", Activity.ActivityType.Land},
+            {"Kayaking", Activity.ActivityType.Water},
+            {"Parachuting", Activity.ActivityType.Air},
+            {"Mountain Biking", Activity.ActivityType.Land},
+            {"Surfing", Activity.ActivityType.Water},
+            {"Hang Gliding", Activity.ActivityType.Air},
+            {"Abseiling", Activity.ActivityType.Air},
+            {"Sailing", Activity.ActivityType.Water},
+            {"Helicopter Tour", Activity.ActivityType.Air}
+        };
+
+
+        List<Activity> activities = new List<Activity>();
+        List<Activity> selectedActivities = new List<Activity>();
 
         public MainWindow()
         {
@@ -50,15 +64,27 @@ namespace CA2
             foreach (var activityType in activityTypes)
             {
                 //Create a new instance of the activity class
-                Activity activity = new Activity(activityType.Key, activityType.Value, 10.0m, new DateTime(2015, 12, 25), Activity.ActivityType.Air);
+                Activity activity = new Activity(activityType.Key, activityType.Value, 10.0m, new DateTime(2015, 12, 25), GetCategory(activityType.Key));
                 //Add this new instance to the activities collection
                 activities.Add(activity);
             }
 
+            //Call the sort method on the activities collection
+            activities.Sort();
+
             //Set the souce of the listbox to the activities collection
-            lstbx_all.ItemsSource = activities;
+            SetListBoxSource(lstbx_all, activities);
+            //lstbx_all.ItemsSource = activities;
+
+            //Call the sort method on the selected activities collection
+            selectedActivities.Sort();
+
             //Set the souce of the listbox to the selected activities collection
-            lstbx_selected.ItemsSource = selectedActivities;
+            SetListBoxSource(lstbx_selected, selectedActivities.ToList<Activity>());
+            //lstbx_selected.ItemsSource = selectedActivities;
+
+            //Update the total cost field
+            UpdateTotalCost(activities.ToList<Activity>());
         }
 
         private void lstbx_all_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -68,7 +94,7 @@ namespace CA2
 
         private void btn_forward_Click(object sender, RoutedEventArgs e)
         {
-
+            //Move the item from the all listbox to the selected listbox
             MoveItem(lstbx_all, activities, selectedActivities);
         }
 
@@ -83,7 +109,7 @@ namespace CA2
         /// <param name="box"></param>
         /// <param name="location"></param>
         /// <param name="destination"></param>
-        private void MoveItem(ListBox box, ObservableCollection<Activity> location, ObservableCollection<Activity> destination)
+        private void MoveItem(ListBox box, List<Activity> location, List<Activity> destination)
         {
             //Declare a variable to store activity for removal
             Activity activityToRemove = null;
@@ -104,6 +130,14 @@ namespace CA2
 
             //Remove the activity from the original collection
             location.Remove(activityToRemove);
+
+            //Sever the connection between the boxes and the sources prior to refresh
+            SetListBoxSource(lstbx_all, null);
+            SetListBoxSource(lstbx_selected, null);
+
+            //Update the itemsource for both boxes to refresh data displayed
+            SetListBoxSource(lstbx_all, activities);
+            SetListBoxSource(lstbx_selected, selectedActivities);
         }
 
         /// <summary>
@@ -125,6 +159,103 @@ namespace CA2
                         tblk_description.Text = activity.Value;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Searches for a given activity by name.
+        /// </summary>
+        /// <param name="activityName"></param>
+        /// <returns>Returns the relevant activity category as an enum.</returns>
+        private Activity.ActivityType? GetCategory(string activityName)
+        {
+            Activity.ActivityType? activityType = null;
+            foreach (var type in activityCategories)
+            {
+                if(type.Key == activityName)
+                {
+                    activityType = type.Value;
+                }
+            }
+            return activityType;
+        }
+
+        /// <summary>
+        /// Changes the source of a given listbox to a given collection
+        /// </summary>
+        /// <param name="box"></param>
+        /// <param name="source"></param>
+        private void SetListBoxSource(ListBox box, List<Activity> source)
+        {
+            box.ItemsSource = source;
+        }
+
+        /// <summary>
+        /// Updates 
+        /// </summary>
+        /// <param name="activities"></param>
+        private void UpdateTotalCost(List<Activity> activities)
+        {
+            decimal totalCost = 0m;
+            foreach (Activity activity in activities)
+            {
+                totalCost += activity.Cost;
+            }
+
+            tblk_totalCost.Text = $"€{totalCost}";
+        }
+
+        /// <summary>
+        /// Changes the view of the Listbox to activities matching a given category type.
+        /// </summary>
+        /// <param name="category"></param>
+        private void ChangeView(string category)
+        {
+            List<Activity> categorizedActivities = new List<Activity>();
+
+            //Iterate through activities collection
+            foreach (Activity activity in activities)
+            {
+                //If the activity has the type specified, add it to the new List
+                if (activity.TypeOfActivity.ToString() == category)
+                {
+                    categorizedActivities.Add(activity);
+                }
+                else if(category == "All")
+                {
+                    //Otherwise, if All is selected, add each activity to the list
+                    categorizedActivities.Add(activity);
+                }
+            }
+
+            //Set the source of the listbox to the new List
+            SetListBoxSource(lstbx_all, categorizedActivities);
+          
+            //Update the total cost field to the current total for activities shown
+            UpdateTotalCost(categorizedActivities);
+        }
+
+        private void radioButton_Selected(object sender, RoutedEventArgs e)
+        {
+            //Retrieve and store the checked radio button sending the event
+            RadioButton radioButton = (RadioButton)sender;
+
+            //Check the radio button that's selected
+            if (radioButton == rdbtn_Land)
+            {
+                ChangeView("Land");
+            }
+            else if (radioButton == rdbtn_water)
+            {
+                ChangeView("Water");
+            }
+            else if (radioButton == rdbtn_Air)
+            {
+                ChangeView("Air");
+            }
+            else
+            {
+                ChangeView("All");
             }
         }
     }
