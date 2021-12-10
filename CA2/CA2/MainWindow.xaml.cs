@@ -49,7 +49,6 @@ namespace CA2
             {"Helicopter Tour", Activity.ActivityType.Air}
         };
 
-
         List<Activity> activities = new List<Activity>();
         List<Activity> selectedActivities = new List<Activity>();
 
@@ -60,11 +59,14 @@ namespace CA2
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //Declare new random object to pass to date generate method
+            Random rnd = new Random();
+
             //Iterate through the activity types disctionary
             foreach (var activityType in activityTypes)
             {
                 //Create a new instance of the activity class
-                Activity activity = new Activity(activityType.Key, activityType.Value, 10.0m, new DateTime(2015, 12, 25), GetCategory(activityType.Key));
+                Activity activity = new Activity(activityType.Key, activityType.Value, 10.0m, GenerateRandomDate(rnd), GetCategory(activityType.Key));
                 //Add this new instance to the activities collection
                 activities.Add(activity);
             }
@@ -74,33 +76,109 @@ namespace CA2
 
             //Set the souce of the listbox to the activities collection
             SetListBoxSource(lstbx_all, activities);
-            //lstbx_all.ItemsSource = activities;
 
             //Call the sort method on the selected activities collection
             selectedActivities.Sort();
 
             //Set the souce of the listbox to the selected activities collection
             SetListBoxSource(lstbx_selected, selectedActivities.ToList<Activity>());
-            //lstbx_selected.ItemsSource = selectedActivities;
 
-            //Update the total cost field
-            UpdateTotalCost(activities.ToList<Activity>());
+            //Update the total cost field on initialization
+            UpdateTotalCost(selectedActivities);
         }
 
         private void lstbx_all_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateDescriptionField(lstbx_all);
+            //Clear any error messages from the message box
+            ClearMessageText();
+
+            //Ensure the selected item is not null before continuing
+            if (lstbx_all.SelectedItem != null)
+            {
+                //Update the description field
+                UpdateDescriptionField(lstbx_all);
+            }
         }
 
         private void btn_forward_Click(object sender, RoutedEventArgs e)
         {
-            //Move the item from the all listbox to the selected listbox
-            MoveItem(lstbx_all, activities, selectedActivities);
+            if (lstbx_all.SelectedItem != null)
+            {
+                //Clear any error messages from the message box
+                ClearMessageText();
+
+                //Move the item from the all listbox to the selected listbox
+                MoveItem(lstbx_all, activities, selectedActivities);
+            }
+            else
+            {
+                //Show an error message
+                ShowMessage("Error: No Activity Selected!");
+            }
+        }
+
+        private void lstbx_selected_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //Clear any error messages from the message box
+            ClearMessageText();
+        }
+
+        private void radioButton_Selected(object sender, RoutedEventArgs e)
+        {
+            //Retrieve and store the checked radio button sending the event
+            RadioButton radioButton = (RadioButton)sender;
+
+            //Check the radio button that's selected
+            if (radioButton == rdbtn_Land)
+            {
+                ChangeView("Land");
+            }
+            else if (radioButton == rdbtn_water)
+            {
+                ChangeView("Water");
+            }
+            else if (radioButton == rdbtn_Air)
+            {
+                ChangeView("Air");
+            }
+            else
+            {
+                ChangeView("All");
+            }
         }
 
         private void btn_backward_Click(object sender, RoutedEventArgs e)
         {
-            MoveItem(lstbx_selected, selectedActivities, activities);
+            if (lstbx_selected.SelectedItem != null)
+            {
+                //Clear any error messages from the message box
+                ClearMessageText();
+                //Move the item
+                MoveItem(lstbx_selected, selectedActivities, activities);
+            }
+            else
+            {
+                //if nothing selected, show an error message
+                ShowMessage("Error: No Activity Selected!");
+            }
+        }
+
+        /// <summary>
+        /// Displayes a given message via the messages textblock
+        /// </summary>
+        /// <param name="message"></param>
+        private void ShowMessage(string message)
+        {
+            //Set the text of the message
+            tblk_messages.Text = message;
+            //Set the colour of the text
+            tblk_messages.Foreground = Brushes.Red;
+        }
+
+        //Clears the message box text
+        private void ClearMessageText()
+        {
+            tblk_messages.Text = "";
         }
 
         /// <summary>
@@ -117,19 +195,28 @@ namespace CA2
             //Cycle through activities list
             foreach (Activity activity in location)
             {
-                //If the select item contains the activity title 
-                if (box.SelectedItem.ToString().Contains(activity.Title))
+                if(box.SelectedItem != null)
                 {
-                    //Add the matching activity from the collection to the selected activities collection
-                    destination.Add(activity);
+                    //If the select item contains the activity title 
+                    if (box.SelectedItem.ToString().Contains(activity.Title))
+                    {
+                        //Add the matching activity from the collection to the selected activities collection
+                        destination.Add(activity);
 
-                    //Store the activity for removal later
-                    activityToRemove = activity;
+                        //Sort the destination on each add
+                        destination.Sort();
+
+                        //Store the activity for removal later
+                        activityToRemove = activity;
+                    }
                 }
             }
 
             //Remove the activity from the original collection
             location.Remove(activityToRemove);
+
+            //Update total cost of currently selected items
+            UpdateTotalCost(selectedActivities);
 
             //Sever the connection between the boxes and the sources prior to refresh
             SetListBoxSource(lstbx_all, null);
@@ -197,12 +284,27 @@ namespace CA2
         private void UpdateTotalCost(List<Activity> activities)
         {
             decimal totalCost = 0m;
-            foreach (Activity activity in activities)
+            if(activities.Count > 0)
             {
-                totalCost += activity.Cost;
+                //Iterate through the list passed
+                foreach (Activity activity in activities)
+                {
+                    //Accumulate and store the cost of all items
+                    totalCost += activity.Cost;
+                }
             }
-
+            // Set the totalCost field to the result
             tblk_totalCost.Text = $"€{totalCost}";
+        }
+
+        /// <summary>
+        /// Overloaded variation of the above method. Instead of taking a list, 
+        /// takes a single value. 9+
+        /// </summary>
+        /// <param name="cost"></param>
+        private void UpdateTotalCost(decimal cost)
+        {
+            tblk_totalCost.Text = $"€{cost}";
         }
 
         /// <summary>
@@ -230,33 +332,28 @@ namespace CA2
 
             //Set the source of the listbox to the new List
             SetListBoxSource(lstbx_all, categorizedActivities);
-          
-            //Update the total cost field to the current total for activities shown
-            UpdateTotalCost(categorizedActivities);
         }
 
-        private void radioButton_Selected(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Generates a new random DatTime object
+        /// </summary>
+        /// <returns>Returns the randomly generated datetime object.</returns>
+        private DateTime GenerateRandomDate(Random rnd)
         {
-            //Retrieve and store the checked radio button sending the event
-            RadioButton radioButton = (RadioButton)sender;
+            //Create a new start date for the range min
+            DateTime startDate = new DateTime(2019, 1, 1);
 
-            //Check the radio button that's selected
-            if (radioButton == rdbtn_Land)
-            {
-                ChangeView("Land");
-            }
-            else if (radioButton == rdbtn_water)
-            {
-                ChangeView("Water");
-            }
-            else if (radioButton == rdbtn_Air)
-            {
-                ChangeView("Air");
-            }
-            else
-            {
-                ChangeView("All");
-            }
+            //Define the end date for the range max
+            DateTime endDate = DateTime.Today;
+
+            //Create a new range based on days between today and the start date
+            int range = (endDate - startDate).Days;
+
+            //Add a random number of days between today and the startdate to the startdate
+            DateTime result = startDate.AddDays(rnd.Next(range));
+
+            //Return the result
+            return result;
         }
     }
 }

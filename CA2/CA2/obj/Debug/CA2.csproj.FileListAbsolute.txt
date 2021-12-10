@@ -16,7 +16,6 @@ C:\Users\User\My Drive\Computer Science Studies\Year2\Subjects\Object_Oriented_D
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\bin\Debug\CA2.exe.config
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\bin\Debug\CA2.exe
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\bin\Debug\CA2.pdb
-C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\CA2.csproj.AssemblyReference.cache
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\MainWindow.g.cs
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\App.g.cs
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\CA2_MarkupCompile.cache

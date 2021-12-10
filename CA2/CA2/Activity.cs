@@ -23,6 +23,14 @@ namespace CA2
 
         public ActivityType? TypeOfActivity { get; set; }
 
+        /// <summary>
+        /// Parametrised constructor - used to initialize all properties on each object instantiation
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="cost"></param>
+        /// <param name="date"></param>
+        /// <param name="type"></param>
         public Activity(string title, string description, decimal cost, DateTime date, ActivityType? type)
         {
             Title = title;
@@ -32,6 +40,10 @@ namespace CA2
             TypeOfActivity = type;
         }
 
+        /// <summary>
+        /// Overrides the ToString() method of the parent Object Class
+        /// </summary>
+        /// <returns>Returns a formatted string of the ActivityTitle and Date</returns>
         public override string ToString()
         {
             return $"{Title} - {ActivityDate.ToShortDateString()}";
@@ -45,15 +57,13 @@ namespace CA2
         /// <returns></returns>
         public int CompareTo(Activity other)
         {
-            // Alphabetic sort if salary is equal. [A to Z]
+            // Sort Alphabetically if date is equal.
             if (this.ActivityDate == other.ActivityDate)
             {
                 return this.ActivityDate.CompareTo(other.ActivityDate);
             }
-            // Default to date sort. [High to low]
+            // Otherwise sort by date as default.
             return other.ActivityDate.CompareTo(this.ActivityDate);
         }
-
-
     }
 }

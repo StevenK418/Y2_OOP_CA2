@@ -14,12 +14,13 @@
         <RadioButton x:Name="rdbtn_water" Content="Water" HorizontalAlignment="Left" Margin="26,143,0,0" VerticalAlignment="Top" GroupName="categories" Checked="radioButton_Selected"/>
         <RadioButton x:Name="rdbtn_Air" Content="Air" HorizontalAlignment="Left" Margin="26,169,0,0" VerticalAlignment="Top" GroupName="categories" Checked="radioButton_Selected"/>
         <ListBox x:Name="lstbx_all" HorizontalAlignment="Left" Height="251" Margin="138,88,0,0" VerticalAlignment="Top" Width="192" SelectionChanged="lstbx_all_SelectionChanged"/>
-        <ListBox x:Name="lstbx_selected" HorizontalAlignment="Left" Height="255" Margin="485,86,0,0" VerticalAlignment="Top" Width="181"/>
+        <ListBox x:Name="lstbx_selected" HorizontalAlignment="Left" Height="255" Margin="485,86,0,0" VerticalAlignment="Top" Width="181" SelectionChanged="lstbx_selected_SelectionChanged"/>
         <Label Content="All Activities" HorizontalAlignment="Left" Margin="138,59,0,0" VerticalAlignment="Top"/>
         <Label Content="Selected Activities" HorizontalAlignment="Left" Margin="487,58,0,0" VerticalAlignment="Top" Width="125"/>
         <TextBlock x:Name="tblk_description" HorizontalAlignment="Left" Margin="140,374,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Width="214"/>
         <Label Content="Description" HorizontalAlignment="Left" Margin="136,345,0,0" VerticalAlignment="Top"/>
         <TextBlock x:Name="tblk_totalCost" HorizontalAlignment="Left" Margin="438,376,0,0" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Text=" "/>
         <Label Content="Cost -" HorizontalAlignment="Left" Margin="388,370,0,0" VerticalAlignment="Top"/>
+        <TextBlock x:Name="tblk_messages" HorizontalAlignment="Left" Margin="140,34,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="400"/>
     </Grid>
 </Window>
