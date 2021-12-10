@@ -27,3 +27,4 @@ C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\CA2.csproj.GenerateR
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\CA2.csproj.CoreCompileInputs.cache
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\CA2.exe
 C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\CA2.pdb
+C:\Users\User\Documents\GitHub\Y2_OOP_CA2\CA2\CA2\obj\Debug\CA2.csproj.AssemblyReference.cache

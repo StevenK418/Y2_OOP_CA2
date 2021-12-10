@@ -1,4 +1,16 @@
-﻿using System;
+﻿/*
+ * Name:                Steven Kelly
+ * Date:                10/12/2021
+ * Lab:                 CA2
+ * Description:         "Activity Planner"
+ * Developer note:      "Price of each individual selected activity can be viewed by selecting individual 
+ *                      item in the selected box". Instead of implemented an additional button, the total cost value can be viewed again by selecting 
+ *                      an item in the All activities box. 
+ * Github: 
+ *                      Clone: "https://github.com/StevenK418/Y2_OOP_CA2.git"
+ *                      View Online: "https://github.com/StevenK418/Y2_OOP_CA2"
+ */
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -66,7 +78,7 @@ namespace CA2
             foreach (var activityType in activityTypes)
             {
                 //Create a new instance of the activity class
-                Activity activity = new Activity(activityType.Key, activityType.Value, 10.0m, GenerateRandomDate(rnd), GetCategory(activityType.Key));
+                Activity activity = new Activity(activityType.Key, activityType.Value, GenerateRandomCost(rnd), GenerateRandomDate(rnd), GetCategory(activityType.Key));
                 //Add this new instance to the activities collection
                 activities.Add(activity);
             }
@@ -98,6 +110,9 @@ namespace CA2
                 //Update the description field
                 UpdateDescriptionField(lstbx_all);
             }
+
+            //Update the running total of the selected activities.
+            UpdateTotalCost(selectedActivities);
         }
 
         private void btn_forward_Click(object sender, RoutedEventArgs e)
@@ -121,6 +136,24 @@ namespace CA2
         {
             //Clear any error messages from the message box
             ClearMessageText();
+
+            //Ensure the selected item is not null before continuing
+            if (lstbx_selected.SelectedItem != null)
+            {
+                //Update the description field
+                UpdateDescriptionField(lstbx_selected);
+
+                //Get a reference to the object selected in the box
+                Activity activity =  lstbx_selected.SelectedItem as Activity;
+
+                //Update the total cost field to the cost of this selected activity object
+                UpdateTotalCost(activity.Cost);
+            }
+            else
+            {
+                //Update the total cost field to the cost of total selected activities
+                UpdateTotalCost(selectedActivities);
+            }
         }
 
         private void radioButton_Selected(object sender, RoutedEventArgs e)
@@ -131,19 +164,19 @@ namespace CA2
             //Check the radio button that's selected
             if (radioButton == rdbtn_Land)
             {
-                ChangeView("Land");
+                FilterView("Land");
             }
             else if (radioButton == rdbtn_water)
             {
-                ChangeView("Water");
+                FilterView("Water");
             }
             else if (radioButton == rdbtn_Air)
             {
-                ChangeView("Air");
+                FilterView("Air");
             }
             else
             {
-                ChangeView("All");
+                FilterView("All");
             }
         }
 
@@ -311,7 +344,7 @@ namespace CA2
         /// Changes the view of the Listbox to activities matching a given category type.
         /// </summary>
         /// <param name="category"></param>
-        private void ChangeView(string category)
+        private void FilterView(string category)
         {
             List<Activity> categorizedActivities = new List<Activity>();
 
@@ -354,6 +387,31 @@ namespace CA2
 
             //Return the result
             return result;
+        }
+
+        /// <summary>
+        /// Generate a random cost.
+        /// </summary>
+        /// <param name="random"></param>
+        /// <returns>Returns the cost as a decimal.</returns>
+        private decimal GenerateRandomCost(Random random)
+        {
+            //Declare new decimal to store resulting cost
+            decimal cost = 0m;
+
+            //Generate the integral part of the cost
+            int wholePart = random.Next(0, 500);
+            //Generate the fractional part of the cost
+            int fractionalPart = random.Next(0, 100);
+
+            //Create a string by concatenating both values with a decimal point between
+            string value = $"{wholePart}.{fractionalPart}";
+
+            //Parse this string as a decimal and store in cost
+            cost = decimal.Parse(value);
+
+            //Return the cost
+            return cost;
         }
     }
 }
